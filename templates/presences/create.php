@@ -103,7 +103,7 @@
                             new faceapi.LabeledFaceDescriptors('<?=auth()->user->name?>', [src_img.descriptor])
                         ], 0.6)
                         var results = faceMatcher.findBestMatch(detection.descriptor)
-                        console.log({res:result})
+                        console.log({res:results})
                         if(results.distance <= 0.5)
                         {
                             var canvas = document.createElement('canvas')
