@@ -243,13 +243,39 @@ function url(){
     return $scheme.'://'.$server_name.$port;
 }
 
-function auth()
+function auth($mode = 'web')  // mode : web | api
 {
+    if($mode == 'api')
+        return JwtSession::get();
     // mode jwt
     if(config('auth') == 'jwt')
         return JwtAuth::get();
     if(config('auth') == 'session')
         return Session::get();
+}
+
+function have_role($user_id,$role)
+{
+    $roles = get_roles($user_id);
+    $status = false;
+    foreach($roles as $data)
+    {
+        if($data->name == $role)
+        {
+            $status = true;
+            break;
+        }
+    }
+
+    return $status;
+}
+
+function get_employee_pic($user_id)
+{
+    $conn = conn();
+    $db   = new Database($conn);
+    $employee = $db->single('employees',['user_id'=>$user_id]);
+    return $employee->pic;
 }
 
 function stringContains($string,$val){
@@ -420,4 +446,22 @@ function count_total($items)
         $total += $item['subtotal'];
 
     return $total;
+}
+
+function base64_to_jpeg($base64_string, $output_file) {
+    // open the output file for writing
+    $ifp = fopen( $output_file, 'wb' ); 
+
+    // split the string on commas
+    // $data[ 0 ] == "data:image/png;base64"
+    // $data[ 1 ] == <actual base64 string>
+    $data = explode( ',', $base64_string );
+
+    // we could add validation here with ensuring count( $data ) > 1
+    fwrite( $ifp, base64_decode( $data[ 1 ] ) );
+
+    // clean up the file resource
+    fclose( $ifp ); 
+
+    return $output_file; 
 }

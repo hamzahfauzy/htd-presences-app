@@ -4,7 +4,11 @@
         <div class="sidebar-content">
             <div class="user">
                 <div class="avatar-sm float-left mr-2">
-                    <img src="assets/img/user-placeholder.png" alt="..." class="avatar-img rounded-circle">
+                    <?php if(have_role(auth()->user->id,'pegawai')): ?>
+                        <img src="<?=get_employee_pic(auth()->user->id)?>" alt="..." class="avatar-img rounded-circle">
+                    <?php else: ?>
+                        <img src="assets/img/user-placeholder.png" alt="..." class="avatar-img rounded-circle">
+                    <?php endif ?>
                 </div>
                 <div class="info">
                     <a href="">

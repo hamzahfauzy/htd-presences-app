@@ -18,6 +18,10 @@ class Session
             $data['user'] = $db->single('users',[
                 'id' => $data['user_id']
             ]);
+
+            $employee = $db->single('employees',['user_id'=>$data['user_id']]);
+            if($employee)
+                $data['user']->employee = $employee;
         }
         return (new ArrayHelper($data))->toObject();
     }

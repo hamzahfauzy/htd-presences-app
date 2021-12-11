@@ -11,16 +11,19 @@ return [
         'host'     => 'localhost',
         'username' => 'root',
         'password' => '',
-        'dbname' => 'notifman_db', // 'notif-sql-1',
+        'dbname' => 'presensi_db', // 'notif-sql-1',
         'port' => NULL,
         'socket' => NULL
     ],
-    'auth' => '', //JWT or Session
-    'jwt_secret' => '123aaaa321',
-    'jwt_cookie_name' => '',
-    'app_domain_name' => '',
+    'jwt_secret' => 'presensi_jwt_secret',
+    'auth' => 'session', //JWT or Session
     'menu' => [
         'menu' => $menu,
         'icon' => $icon_menu
-    ]
+    ],
+    'maps' => [
+        'lat' => '2.9880487',
+        'lng' => '99.6136513'
+    ],
+    'demo_status'=>true,
 ];
