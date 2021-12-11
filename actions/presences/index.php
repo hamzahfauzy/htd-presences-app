@@ -13,7 +13,7 @@ $query = "  SELECT
         ";
 if(have_role(auth()->user->id,'pegawai'))
     $query .= " WHERE presences.employee_id=".auth()->user->employee->id;
-$query .= "ORDER BY presences.created_at DESC";
+$query .= " ORDER BY presences.created_at DESC";
 $db->query = $query;
 $datas = $db->exec('all');
 
