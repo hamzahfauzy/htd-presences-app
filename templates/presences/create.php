@@ -117,16 +117,15 @@
                             formData.append('pic',pic)
                             formData.append('schedule_id',schedule_id)
 
-                            fetch('index.php?r=presences/create',{
+                            var req = await fetch('index.php?r=presences/create',{
                                 method:'POST',
                                 body:formData
                             })
-                            .then(res => res.json())
-                            .then(res => {
-                                document.getElementById('result').innerHTML = res.msg
-                                if(res.status == 'success')
-                                    location.href='index.php?r=presences/index'
-                            })
+                            var res = await req.json()
+                            document.getElementById('result').innerHTML = res.msg
+                            if(res.status == 'success')
+                                location.href='index.php?r=presences/index'
+                        
                         }
                         else
                         {
