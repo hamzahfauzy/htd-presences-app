@@ -124,7 +124,9 @@
                             var res = await req.json()
                             document.getElementById('result').innerHTML = res.msg
                             if(res.status == 'success')
-                                location.href='index.php?r=presences/index'
+                            {
+                                // location.href='index.php?r=presences/index'
+                            }
                         
                         }
                         else
