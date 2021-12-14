@@ -3,17 +3,27 @@
     #result {
         display:none;
         text-align: center;
-        z-index: 2;
+        z-index: 10002;
         color: rgba(255,255,255,0.8);
         max-width: 450px;
         width:85%;
         background: rgba(0,0,0,0.5);
         padding: 10px;
         border-radius: 8px;
-        position: absolute;
+        position: fixed;
         bottom: 20px;
         left: 50%;
+        margin-bottom:40px;
         transform: translate(-50%, 50%);
+    }
+    .fullscreen {
+        z-index: 10000;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        transform:translateX(calc((100% - 100vw) / 2));
     }
     </style>
     <div class="content">
@@ -39,11 +49,8 @@
                         <div class="card-body">
                             <center>
                                 <?php foreach($schedules as $schedule): ?>
-                                <button class="btn btn-success" onclick="openCam(<?=$schedule->id?>)"><?=$schedule->name?></button>
+                                <button class="btn btn-success mb-2" onclick="openCam(<?=$schedule->id?>)"><?=$schedule->name?></button>
                                 <?php endforeach ?>
-                                <p></p>
-                                <video autoplay="true" width="350" height="250" id="video" muted></video>
-                                <div id="result">Memuat Kamera...</div>
                                 <div class="vid_result"></div>
                             </center>
                         </div>
@@ -51,6 +58,10 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div>
+        <video autoplay="true" id="video" muted></video>
+        <div id="result">Memuat Kamera...</div>
     </div>
     <script src="js/face-api/face-api.js"></script>
     <script defer>
@@ -82,6 +93,7 @@
     }
 
     video.addEventListener('play', () => {
+        video.classList.add('fullscreen')
         document.getElementById('result').innerHTML = "Sedang Memindai!"
         interval = setInterval(async () => {
             const detection = await faceapi.detectSingleFace(video,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
