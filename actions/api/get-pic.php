@@ -1,5 +1,5 @@
 <?php
 
 header('Content-Type: image/jpg');
-readfile("../presences/" . $_GET['pic']);
+readfile("../storage/" . $_GET['pic']);
 die();

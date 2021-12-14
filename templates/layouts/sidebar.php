@@ -5,7 +5,7 @@
             <div class="user">
                 <div class="avatar-sm float-left mr-2">
                     <?php if(have_role(auth()->user->id,'pegawai')): ?>
-                        <img src="<?=get_employee_pic(auth()->user->id)?>" alt="..." class="avatar-img rounded-circle">
+                        <img src="index.php?r=api/get-pic&pic=<?=get_employee_pic(auth()->user->id)?>" alt="..." class="avatar-img rounded-circle">
                     <?php else: ?>
                         <img src="assets/img/user-placeholder.png" alt="..." class="avatar-img rounded-circle">
                     <?php endif ?>

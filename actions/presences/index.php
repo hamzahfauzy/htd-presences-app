@@ -5,7 +5,8 @@ $db   = new Database($conn);
 $success_msg = get_flash_msg('success');
 $query = "  SELECT 
                 presences.*, employees.name as employee_name, 
-                schedules.name as schedule_name 
+                schedules.name as schedule_name,
+                schedules.presence_time_start, schedules.presence_time_end
             FROM 
                 presences 
             JOIN employees ON employees.id=presences.employee_id
@@ -13,7 +14,7 @@ $query = "  SELECT
         ";
 if(have_role(auth()->user->id,'pegawai'))
     $query .= " WHERE presences.employee_id=".auth()->user->employee->id;
-$query .= " ORDER BY presences.created_at DESC";
+$query .= " ORDER BY presences.id DESC";
 $db->query = $query;
 $datas = $db->exec('all');
 

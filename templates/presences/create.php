@@ -64,7 +64,9 @@
         <div id="result">Memuat Kamera...</div>
     </div>
     <script src="js/face-api/face-api.js"></script>
+    <script src="employee-samples/sample-<?=auth()->user->employee->id?>.js"></script>
     <script defer>
+    var descriptor = new Float32Array(Object.values(employee_sample.descriptor))
     var mystream, schedule_id,interval;
     var video = document.getElementById('video')
     function openCam(_schedule_id)
@@ -95,65 +97,74 @@
     video.addEventListener('play', () => {
         video.classList.add('fullscreen')
         document.getElementById('result').innerHTML = "Sedang Memindai!"
-        interval = setInterval(async () => {
+        setTimeout(async e => {
+            video.pause()
+            mystream.getTracks().forEach(track => {
+                track.stop();
+            });
+            document.getElementById('result').innerHTML = "Mendeteksi Wajah..."
             const detection = await faceapi.detectSingleFace(video,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
             console.log({det:detection})
             if(detection != undefined)
             {
+                document.getElementById('result').innerHTML = "Wajah Terdeteksi! Mengenali Wajah..."
                 clearInterval(interval)
                 video.pause()
                 mystream.getTracks().forEach(track => {
                     track.stop();
                 });
-                const img = await faceapi.fetchImage('<?=auth()->user->employee->pic?>')
-                const src_img = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
-                console.log({img:src_img})
-                if(src_img != undefined)
-                {
-                    try {
-                        const faceMatcher = new faceapi.FaceMatcher([
-                            new faceapi.LabeledFaceDescriptors('<?=auth()->user->name?>', [src_img.descriptor])
-                        ], 0.6)
-                        var results = faceMatcher.findBestMatch(detection.descriptor)
-                        console.log({res:results})
-                        if(results.distance <= 0.5)
-                        {
-                            var canvas = document.createElement('canvas')
-                            var context = canvas.getContext('2d')
-                            canvas.height = video.videoHeight // offsetHeight
-                            canvas.width = video.videoWidth // offsetWidth
-                            context.drawImage(video,0,0,canvas.width,canvas.height)
-                            var pic = canvas.toDataURL("image/jpeg")
+                
+                try {
+                    const faceMatcher = new faceapi.FaceMatcher([
+                        new faceapi.LabeledFaceDescriptors('<?=auth()->user->name?>', [descriptor])
+                    ], 0.6)
+                    var results = faceMatcher.findBestMatch(detection.descriptor)
+                    console.log({res:results})
+                    if(results.distance <= 0.5)
+                    {
+                        document.getElementById('result').innerHTML = "Wajah Cocok! Absensi Berhasil"
+                        var canvas = document.createElement('canvas')
+                        var context = canvas.getContext('2d')
+                        canvas.height = video.videoHeight // offsetHeight
+                        canvas.width = video.videoWidth // offsetWidth
+                        context.drawImage(video,0,0,canvas.width,canvas.height)
+                        var pic = canvas.toDataURL("image/jpeg")
 
-                            var formData = new FormData;
-                            formData.append('pic',pic)
-                            formData.append('schedule_id',schedule_id)
+                        var formData = new FormData;
+                        formData.append('pic',pic)
+                        formData.append('schedule_id',schedule_id)
 
-                            var req = await fetch('index.php?r=presences/create',{
-                                method:'POST',
-                                body:formData
-                            })
-                            var res = await req.json()
-                            document.getElementById('result').innerHTML = res.msg
-                            if(res.status == 'success')
-                            {
-                                location.href='index.php?r=presences/index'
-                            }
-                            return
-                        }
-                        else
+                        var req = await fetch('index.php?r=presences/create',{
+                            method:'POST',
+                            body:formData
+                        })
+                        var res = await req.json()
+                        document.getElementById('result').innerHTML = res.msg
+                        if(res.status == 'success')
                         {
-                            document.getElementById('result').innerHTML = "Wajah tidak cocok! Pemindaian ulang dalam 3 detik"
-                            setTimeout(() => {
-                                startVideo()
-                            }, 3000);
+                            location.href='index.php?r=presences/index'
                         }
-                    } catch (error) {
-                        document.getElementById('result').innerHTML = 'Error! Silahkan Refresh untuk mengulangi'
+                        return
                     }
+                    else
+                    {
+                        document.getElementById('result').innerHTML = "Wajah tidak cocok! Pemindaian ulang dalam 3 detik"
+                        setTimeout(() => {
+                            startVideo()
+                        }, 3000);
+                    }
+                } catch (err) {
+                    document.getElementById('result').innerHTML = 'Error! Silahkan Refresh untuk mengulangi'
                 }
             }
-        }, 500);
+            else
+            {
+                document.getElementById('result').innerHTML = "Wajah tidak ditemukan! Pemindaian ulang dalam 3 detik"
+                setTimeout(() => {
+                    startVideo()
+                }, 3000);
+            }
+        }, 4000);
     })
     </script>
 <?php load_templates('layouts/bottom') ?>

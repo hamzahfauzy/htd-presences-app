@@ -1,3 +1,5 @@
 config/main.php
-public/uploads/employees/*
-presences/*
+public/uploads/*
+storage/presences/*
+storage/employees/*
+public/employee-samples/*

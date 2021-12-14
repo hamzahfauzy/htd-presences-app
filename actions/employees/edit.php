@@ -16,12 +16,18 @@ if(request() == 'POST')
         $pic  = $_FILES['employees'];
         $ext  = pathinfo($pic['name']['pic'], PATHINFO_EXTENSION);
         $name = strtotime('now').'.'.$ext;
-        $file = 'uploads/employees/'.$name;
-        copy($pic['tmp_name']['pic'],$file);
+        $file = 'employees/'.$name;
+        copy($pic['tmp_name']['pic'],'../storage/'.$file);
         $_POST['employees']['pic'] = $file;
     }
     else
         $_POST['employees']['pic'] = $data->pic;
+
+    if(!empty($_POST['detection']))
+    {
+        $detection = 'var employee_sample='.$_POST['detection'];
+        file_put_contents('employee-samples/sample-'.$_GET['id'].'.js',$detection);
+    }
 
     $db->update('employees',$_POST['employees'],[
         'id' => $_GET['id']

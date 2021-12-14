@@ -74,7 +74,7 @@
 							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
 								<div class="avatar-sm">
 									<?php if(have_role(auth()->user->id,'pegawai')): ?>
-										<img src="<?=get_employee_pic(auth()->user->id)?>" alt="..." class="avatar-img rounded-circle">
+										<img src="index.php?r=api/get-pic&pic=<?=get_employee_pic(auth()->user->id)?>" alt="..." class="avatar-img rounded-circle">
 									<?php else: ?>
 										<img src="assets/img/user-placeholder.png" alt="..." class="avatar-img rounded-circle">
 									<?php endif ?>
@@ -86,7 +86,7 @@
 										<div class="user-box">
 											<div class="avatar-lg">
 												<?php if(have_role(auth()->user->id,'pegawai')): ?>
-													<img src="<?=get_employee_pic(auth()->user->id)?>" alt="image profile" class="avatar-img rounded">
+													<img src="index.php?r=api/get-pic&pic=<?=get_employee_pic(auth()->user->id)?>" alt="image profile" class="avatar-img rounded">
 												<?php else: ?>
 													<img src="assets/img/user-placeholder.png" alt="image profile" class="avatar-img rounded">
 												<?php endif ?>

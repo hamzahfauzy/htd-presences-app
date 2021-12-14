@@ -30,6 +30,7 @@
                                             <th width="20px">#</th>
                                             <th>Jadwal</th>
                                             <th>Waktu</th>
+                                            <th>Status</th>
                                             <th>Gambar</th>
                                         </tr>
                                     </thead>
@@ -39,15 +40,41 @@
                                             <td colspan="4"><i><center>Tidak ada data</center></i></td>
                                         </tr>
                                         <?php endif ?>
-                                        <?php foreach($datas as $index => $data): ?>
+                                        <?php 
+                                        foreach($datas as $index => $data):
+                                            $time  = date('Y-m-d',strtotime($data->created_at));
+                                            $start = strtotime($time.' '.$data->presence_time_start.':00');
+                                            $end   = strtotime($time.' '.$data->presence_time_end.':00');
+                                            $time  = strtotime($data->created_at);
+
+                                            $in_time  = $time >= $start && $time <= $end;
+                                            $status   = '<span class="badge badge-success">Tepat Waktu</span>';
+                                            if(!$in_time)
+                                            {
+                                                // apakah telat
+                                                if($time - $start < 0)
+                                                {
+                                                    $diff  = round(abs($time - $start) / 60);
+                                                    $diff  = $diff >= 60 ? round($diff / 60) . " Jam" : $diff. " Menit";
+                                                    $status = '<span class="badge badge-warning">Terlalu Cepat '.$diff.'</span>';
+                                                }
+                                                elseif($time - $end > 0)
+                                                {
+                                                    $diff  = round(abs($time - $end) / 60);
+                                                    $diff  = $diff >= 60 ? round($diff / 60) . " Jam" : $diff. " Menit";
+                                                    $status = '<span class="badge badge-danger">Telat '.$diff.'</span>';
+                                                }
+                                            }
+                                        ?>
                                         <tr>
                                             <td>
                                                 <?=$index+1?>
                                             </td>
                                             <td><?=$data->schedule_name?></td>
                                             <td><?=$data->created_at?></td>
+                                            <td><?= $status ?></td>
                                             <td>
-                                                <img src="index.php?r=api/presences/get-pic&pic=<?=$data->pic?>" width="150px" style="margin:10px;">
+                                                <img src="index.php?r=api/get-pic&pic=<?=$data->pic?>" width="150px" style="margin:10px;">
                                             </td>
                                         </tr>
                                         <?php endforeach ?>

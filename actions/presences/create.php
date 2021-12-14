@@ -6,8 +6,8 @@ $auth = auth();
 
 if(request() == 'POST')
 {
-    $pic   = $auth->user->employee->id.'-'.strtotime('now').'.png';
-    base64_to_jpeg($_POST['pic'], '../presences/'.$pic);
+    $pic   = 'presences/'.$auth->user->employee->id.'-'.strtotime('now').'.png';
+    base64_to_jpeg($_POST['pic'], '../storage/'.$pic);
 
     $data = [
         'employee_id' => $auth->user->employee->id,
