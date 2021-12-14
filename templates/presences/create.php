@@ -139,7 +139,7 @@
                             {
                                 location.href='index.php?r=presences/index'
                             }
-                        
+                            return
                         }
                         else
                         {
