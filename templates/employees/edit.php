@@ -35,12 +35,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="">Foto</label><br>
-                                    <button type="button" class="btn btn-warning" onclick="document.querySelector('#employee_pic').click()"><i class="fas fa-upload"></i> Upload Foto</button>
-                                    <!-- <div class="d-flex">
-                                        <button type="button" class="btn btn-warning" onclick="document.querySelector('#employee_pic').click()"><i class="fas fa-upload"></i> Upload Foto</button>
+                                    <div class="d-flex">
+                                        <button type="button" disabled class="btn btn-warning btn-dsb" onclick="document.querySelector('#employee_pic').click()"><i class="fas fa-upload"></i> Upload Foto</button>
+                                        <!-- <button type="button" class="btn btn-warning" onclick="document.querySelector('#employee_pic').click()"><i class="fas fa-upload"></i> Upload Foto</button> -->
                                         &nbsp;
-                                        <button type="button" class="btn btn-warning"><i class="fas fa-camera"></i> Ambil Foto</button>
-                                    </div> -->
+                                        <button type="button" disabled class="btn btn-warning btn-dsb" onclick="validateFoto('#employee_img')"><i class="fas fa-camera"></i> Validasi Foto</button>
+                                    </div>
                                     <input type="file" id="employee_pic" name="employees[pic]" class="form-control" style="opacity:0;height:0!important;overflow:hidden;" onchange="loadFoto(this)">
                                     <img src="index.php?r=api/get-pic&pic=<?=$data->pic?>" alt="" width="150px" id="employee_img">
                                 </div>
@@ -69,7 +69,9 @@
         faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
         faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
         faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
-    ])
+    ]).then(e => {
+        document.querySelectorAll('.btn-dsb').forEach(el => el.disabled = false)
+    })
     async function loadFoto(f)
     {
         var file = f.files[0]
@@ -80,16 +82,36 @@
         }
         reader.readAsDataURL(file);
 
-        var image = await faceapi.bufferToImage(file)
-        const detection = await faceapi.detectSingleFace(image,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
-        console.log(detection)
-        if(detection == undefined)
+        var image = await faceChecker(file)
+        if(image == undefined)
             alert('Wajah tidak terdeteksi pada foto')
         else
         {
             alert('Wajah terdeteksi pada foto')
             document.querySelector('input[name=detection]').value = JSON.stringify(detection)
         }
+    }
+
+    async function validateFoto(el)
+    {
+        var file = document.querySelector(el)
+        var image = await faceChecker(file,'el')
+        if(image == undefined)
+            alert('Wajah tidak terdeteksi pada foto')
+        else
+        {
+            alert('Wajah terdeteksi pada foto')
+            document.querySelector('input[name=detection]').value = JSON.stringify(detection)
+        }
+    }
+
+    async function faceChecker(file, type = 'buffer')
+    {
+        if(type == 'buffer')
+            file = await faceapi.bufferToImage(file)
+        
+        const detection = await faceapi.detectSingleFace(file,new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor()
+        return detection
     }
     </script>
 <?php load_templates('layouts/bottom') ?>

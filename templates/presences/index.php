@@ -8,7 +8,7 @@
                         <h5 class="text-white op-7 mb-2">Log data presensi</h5>
                     </div>
                     <div class="ml-md-auto py-2 py-md-0">
-                        <?php if(have_role(auth()->user->id,'pegawai')): ?>
+                        <?php if(have_role(auth()->user->id,'pegawai') && file_exists('employee-samples/sample-'.auth()->user->employee->id.'.js')): ?>
                             <a href="index.php?r=presences/create" class="btn btn-secondary btn-round">Buat Presensi</a>
                         <?php endif ?>
                     </div>
